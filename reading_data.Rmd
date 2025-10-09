@@ -54,11 +54,35 @@ tabl_marj =
 
 
 
+## Star War Movie info
+
+I want the data from [here](https://www.imdb.com/list/ls070150896/).
+
+```{r}
+url = "https://www.imdb.com/list/ls070150896/"
+
+swm_html = read_html(url)
+```
+
+Grab elements that I want
+
+```{r}
+title_vec = 
+  swm_html %>%
+  html_nodes(css = ".ipc-title-link-wrapper .ipc-title__text--reduced") %>%
+  html_text()
+
+runtime_vec = 
+  swm_html %>%
+  html_nodes(css = ".dli-title-metadata-item:nth-child(2)") %>%
+  html_text()
 
 
-
-
-
+swm_df = 
+  tibble(
+    title = title_vec,
+    runtime = runtime_vec)
+```
 
 
 
