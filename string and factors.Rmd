@@ -26,22 +26,92 @@ scale_color_discrete = scale_color_viridis_d
 scale_fill_discrete = scale_fill_viridis_d
 ```
 
-## R Markdown
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+## Strings and regex
 
-```{r cars}
-summary(cars)
+```{r}
+string_vec = c("my", "name", "is", "jeff")
+
+str_detect(string_vec, "jeff")
 ```
+`string_vec`：创建一个字符向量，包含4个元素
+`str_detect`: 逐个元素检测是否包含给定模式，对 ‘string_vec’ 的每个元素检查里边有没有 "jeff"
 
-## Including Plots
 
-You can also embed plots, for example:
+```{r}
+string_vec = c(
+  "i think we all rule for participating",
+  "i think i have been caught",
+  "i think this will be quite fun actually",
+  "it will be fun, i think"
+  )
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+str_detect(string_vec, "^i think")
+
+str_detect(string_vec, "i think$")
 ```
+`^`：行首锚点，表示“从字符串开头就要匹配这个模式”
+`$`：行尾锚点
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+```{r}
+string_vec = c(
+  "Time for a Pumpkin Spice Latte!",
+  "went to the #pumpkinpatch last weekend",
+  "Pumpkin Pie is obviously the best pie",
+  "SMASHING PUMPKINS -- LIVE IN CONCERT!!"
+  )
+
+str_detect(string_vec,"[Pp]umpkin")
+```
+`[Pp]umpkin`:第一位是 P 或 p，后面紧跟小写 umpkin （末尾有个 S 也没关系，因为模式只要求匹配到 pumpkin 作为子串即可）
+
+
+```{r}
+string_vec = c(
+  '7th inning stretch',
+  '1st half soon to begin. Texas won the toss.',
+  'she is 5 feet 4 inches tall',
+  '3AM - cant sleep :('
+  )
+
+str_detect(string_vec, "^[0-9][a-zA-Z]")
+```
+`[a-zA-Z]`：字符类，表示“这里必须是一个英文字母，小写 a–z 或大写 A–Z
+
+
+```{r}
+string_vec = c(
+  'Its 7:11 in the evening',
+  'want to go to 7-11?',
+  'my flight is AA711',
+  'NetBios: scanning ip 203.167.114.66'
+  )
+
+str_detect(string_vec, "7.11")
+```
+这里的‘.’代表任意单个字符”（换行除外）
+
+
+```{r}
+string_vec = c(
+  'The CI is [2, 5]',
+  ':-]',
+  ':-[',
+  'I found the answer on pages [6-7]'
+  )
+
+str_detect(string_vec, "\\[")
+```
+在正则里，`[` 是特殊字符（用来开始字符类），所以要匹配字面量的 `[`，必须转义成 `\[`
+
+但在 R 的字符串里，反斜杠本身也要转义，所以最终写成 `\\[`
+
+note:
+匹配左右任一：`[\\[\\]]`
+
+
+
+
+
