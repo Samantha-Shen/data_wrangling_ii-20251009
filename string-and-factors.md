@@ -189,24 +189,53 @@ level 名（可以给多个）; after：把这些指定的 level 放到第几个
 nsduh_url = "http://samhda.s3-us-gov-west-1.amazonaws.com/s3fs-public/field-uploads/2k15StateFiles/NSDUHsaeShortTermCHG2015.htm"
 
 table_marj = 
-  read_html(nsduh_url) |> 
-  html_table() |> 
-  first() |>
+  read_html(nsduh_url) %>%
+  html_table() %>%
+  first() %>%
   slice(-1)
 ```
 
 ``` r
 data_marj = 
-  table_marj |>
-  select(-contains("P Value")) |>
+  table_marj %>%
+  select(-contains("P Value")) %>%
   pivot_longer(
     -State,
     names_to = "age_year", 
-    values_to = "percent") |>
-  separate(age_year, into = c("age", "year"), sep = "\\(") |>
+    values_to = "percent") %>%
+  separate(age_year, into = c("age", "year"), sep = "\\(") %>%
   mutate(
     year = str_replace(year, "\\)", ""),
     percent = str_replace(percent, "[a-c]$", ""),
-    percent = as.numeric(percent)) |>
+    percent = as.numeric(percent)) %>%
   filter(!(State %in% c("Total U.S.", "Northeast", "Midwest", "South", "West")))
 ```
+
+## NSDUH – factors
+
+``` r
+data_marj %>%
+  filter(age == "12-17") %>%
+  mutate(State = fct_relevel(State, "Texas", "Oklahama")) %>%
+  ggplot(aes(x = State, y = percent, color = year)) + 
+    geom_point() + 
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+```
+
+    ## Warning: There was 1 warning in `mutate()`.
+    ## ℹ In argument: `State = fct_relevel(State, "Texas", "Oklahama")`.
+    ## Caused by warning:
+    ## ! 1 unknown level in `f`: Oklahama
+
+<img src="string-and-factors_files/figure-gfm/unnamed-chunk-11-1.png" width="90%" />
+
+``` r
+data_marj %>%
+  filter(age == "12-17") %>%
+  mutate(State = fct_reorder(State, percent)) %>%
+  ggplot(aes(x = State, y = percent, color = year)) + 
+    geom_point() + 
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+
+<img src="string-and-factors_files/figure-gfm/unnamed-chunk-12-1.png" width="90%" />
