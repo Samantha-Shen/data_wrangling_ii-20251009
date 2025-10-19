@@ -146,3 +146,39 @@ str_detect(string_vec, "\\[")
 但在 R 的字符串里，反斜杠本身也要转义，所以最终写成 `\\[`
 
 note: 匹配左右任一：`[\\[\\]]`
+
+## Factors
+
+``` r
+vec_sex = factor(c("male", "male", "female", "female"))
+vec_sex
+```
+
+    ## [1] male   male   female female
+    ## Levels: female male
+
+``` r
+as.numeric(vec_sex)
+```
+
+    ## [1] 2 2 1 1
+
+`as.numeric`返回的是底层的整数编码,一般情况下默认按照首字母顺序来编码
+
+``` r
+vec_sex = fct_relevel(vec_sex, "male")
+vec_sex
+```
+
+    ## [1] male   male   female female
+    ## Levels: male female
+
+``` r
+as.numeric(vec_sex)
+```
+
+    ## [1] 1 1 2 2
+
+`fct_relevel(f, ..., after = 0)`: f：要重排的因子; …：你想指定顺序的
+level 名（可以给多个）; after：把这些指定的 level 放到第几个后面（默认
+0，即放到最前；Inf 表示放到最后）
