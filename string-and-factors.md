@@ -182,3 +182,31 @@ as.numeric(vec_sex)
 `fct_relevel(f, ..., after = 0)`: f：要重排的因子; …：你想指定顺序的
 level 名（可以给多个）; after：把这些指定的 level 放到第几个后面（默认
 0，即放到最前；Inf 表示放到最后）
+
+## NSDUH
+
+``` r
+nsduh_url = "http://samhda.s3-us-gov-west-1.amazonaws.com/s3fs-public/field-uploads/2k15StateFiles/NSDUHsaeShortTermCHG2015.htm"
+
+table_marj = 
+  read_html(nsduh_url) |> 
+  html_table() |> 
+  first() |>
+  slice(-1)
+```
+
+``` r
+data_marj = 
+  table_marj |>
+  select(-contains("P Value")) |>
+  pivot_longer(
+    -State,
+    names_to = "age_year", 
+    values_to = "percent") |>
+  separate(age_year, into = c("age", "year"), sep = "\\(") |>
+  mutate(
+    year = str_replace(year, "\\)", ""),
+    percent = str_replace(percent, "[a-c]$", ""),
+    percent = as.numeric(percent)) |>
+  filter(!(State %in% c("Total U.S.", "Northeast", "Midwest", "South", "West")))
+```
